@@ -1,0 +1,33 @@
+@font-face {
+    font-family: 'Libre Baskerville';
+    src: url(../fonts/libre-baskerville/LibreBaskerville-Regular.otf);
+}
+
+body {
+    font-family: 'Libre Baskerville', sans-serif;
+}
+
+img.fill {
+    width: 100%
+}
+
+footer {
+    background-color: #eeeeee;
+}
+
+ul.plain {
+    list-style: none;
+    padding-left: 0px;
+    list-style-type: none;
+    width: 100%;
+    display:flex;
+    justify-content:space-between;
+}
+
+ul.plain > li {
+    display: inline-block;
+}
+
+.spaced-top {
+    margin-top: 50px;
+}

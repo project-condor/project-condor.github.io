@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Project Condor</title>
+
+    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/lib/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/stylesheets/main.css">
+
+  </head>
+  <body>
+
+    <header class="jumbotron">
+      <div class="container">
+	<div style="text-align: center;">
+	  <img src="assets/images/logo.svg" alt="logo">
+	  <h1>Project Condor</h1>
+	  <p>DIY Drone System</p>
+	  <a class="btn btn-default" href="https://github.com/project-condor"><i class="fa fa-github"></i></a>
+	</div>
+      </div>
+    </header>
+    
+    <main class="container">
+      <div class="row">
+	<div class="col-md-7">
+	  <h2>Structure</h2>
+	  <p>Condor I, a large quadrotor airframe with a very modular rack-like cargo area.</p>
+	  <p>All with parts from the hardware store.</p>
+	  <div style="text-align: right;">
+	    <a class="btn btn-default" href="https://github.com/project-condor/condor-1">Plans</a>
+	    </div>
+	</div>
+	<div class="col-md-5"><img class="fill" src="assets/images/structure.png" alt="structure" title="Condor-I"></div>
+      </div>
+      <div class="row spaced-top">
+	<div class="col-md-5"><img class="fill" src="assets/images/trifle.svg" alt="controller" title="Controller Board: Trifle"></div>
+	<div class="col-md-7">
+	  <h2>Controller</h2>
+	  <p>The flight controller is the nervous system of a drone, keeping it stabilized and in the air.</p>
+	  <p>Based on available off-the-shelf components such as the Teensy 3.1 microcontroller and Adafruit 10-DOF sensor board,
+	    this controller is trivial to build (hence the name, trifle).</p>
+	  <div style="text-align: right;">
+	    <a class="btn btn-default" href="https://github.com/project-condor/trifle">Hardware</a>
+	    <a class="btn btn-default" href="https://github.com/project-condor/px4-firmware">Software *</a>
+	    <p></p>
+	  </div>
+	  <p>
+	    *Note: the custom controller project is currently stalled, it is recommended to use the PX4 Autopilot.
+	    Modifications to the underlying real-time kernel, NuttX, have been merged back upstream.
+	  </p>
+	</div>
+      </div>
+      <div class="row spaced-top">
+	<div class="col-md-7">
+	  <h2>Cockpit</h2>
+	  <p>No remote control needed.</p>
+	  <p>The drone is guided from a computer through a telemetry link. Current state is displayed in a modern web-app and controlling is
+	    done via a gamepad.
+	  </p>
+	  <div style="text-align: right;">
+	    <a class="btn btn-success" href="http://vfd-demo.jodersky.ch">Virtual Cockpit (Demo)</a>
+	    <a class="btn btn-default" href="https://github.com/project-condor/vfd">Virtual Cockpit</a>
+	    <a class="btn btn-default" href="https://github.com/project-condor/maverick">Gamepad Remote</a>
+	    <p></p>
+	  </div>
+	</div>
+	<div class="col-md-5"><img class="fill" src="assets/images/vfd.png" alt="vfd" title="Virtual Cockpit"></div>
+      </div>
+    </main>
+    
+    <footer>
+      <div class="container spaced-top">
+	<h3 style="text-align: center;">Other Projects of Interest</h3>
+	<ul class="plain spaced-top">
+	  <li><a href="https://pixhawk.org">PX4 Autopilot</a></li>
+	  <li><a href="https://github.com/mavlink/mavlink">MAVLink Protocol</a></li>
+	  <li><a href="https://github.com/tridge/SiK">SiK Telemetry Firmware</a></li>
+	</ul>
+	<div class="spaced-top"></div>
+      </div>
+    </footer>
+
+    <script src="assets/lib/jquery/jquery-1.11.3.min.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
