@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+
+	<title>Not Your Dad's Scala: Flying Objects and Proactive Streams</title>
+
+	<meta name="description" content="Not Your Dad's Scala: Flying Objects and Proactive Streams">    
+
+		<meta name="author" content="Jakob Odersky" />
+	
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="revealjs/css/reveal.css">
+		<link rel="stylesheet" href="revealjs/css/theme/league.css" id="theme">
+	
+
+	<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="revealjs/lib/css/zenburn.css">
+	
+	<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+	<script>
+         var link = document.createElement( 'link' );
+         link.rel = 'stylesheet';
+         link.type = 'text/css';
+         link.href = window.location.search.match( /print-pdf/gi ) ? 'revealjs/css/print/pdf.css' : 'revealjs/css/print/paper.css';
+         document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+	<!--[if lt IE 9]>
+	    <script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+	    </head>
+
+    <body>
+	
+	<div class="reveal">
+
+	    <!-- Any section element inside of this container is displayed as a slide -->
+	    <div class="slides">
+
+		<section>
+		    <h2>Not Your Dad's Scala: Flying Objects and Proactive Streams</h2>
+		    <h5>Jakob Odersky</h5>
+		    		    <h5>
+			<a href="https://github.com/jodersky">@jodersky</a>
+		    </h5>
+		    		    <p>
+			<h4>April 18, 2016</h4>
+		    </p>
+		</section>
+
+		
+		<section id="or-navigating-a-drone-with-scala" class="level2">
+<h2>Or, <br/> Navigating a Drone with Scala</h2>
+</section>
+<section id="initial-idea" class="level2">
+<h2>Initial Idea</h2>
+<ul>
+<li>Build a quadrotor</li>
+<li>From scratch
+<ul>
+<li>hardware</li>
+<li>software</li>
+</ul></li>
+<li>Control with a joystick, no remote</li>
+<li>⇒ Project Condor</li>
+</ul>
+</section>
+<section id="two-parts" class="level2">
+<h2>Two Parts</h2>
+<ol type="1">
+<li>The Quadrotor</li>
+<li>The Base Station</li>
+</ol>
+</section>
+<section id="system-overview" class="level2">
+<h2>System Overview</h2>
+<figure>
+<img src="images/functional.svg" alt="overview" /><figcaption>overview</figcaption>
+</figure>
+</section>
+<section id="the-quadrotor" class="level2">
+<h2>1. The Quadrotor</h2>
+<section id="the-flying-object-no-scala-here" class="level3">
+<h3><em>(the flying object)</em> <br/> No Scala Here</h3>
+<p>Move on to the Scala parts →</p>
+<p>See backstory ↓</p>
+</section>
+<section id="frame" class="level3">
+<h3>Frame</h3>
+<figure>
+<img src="images/structure.png" alt="Structure" /><figcaption>Structure</figcaption>
+</figure>
+</section>
+<section id="frame-1" class="level3">
+<h3>Frame</h3>
+<figure>
+<img src="images/prototype.jpg" alt="Unit" /><figcaption>Unit</figcaption>
+</figure>
+</section>
+<section id="electronics" class="level3">
+<h3>Electronics</h3>
+<figure>
+<img src="images/trifle.jpg" alt="Trifle Board" /><figcaption>Trifle Board</figcaption>
+</figure>
+</section>
+<section id="flight-stack" class="level3">
+<h3>Flight Stack</h3>
+<ul>
+<li>And then I found PX4, exactly what I was trying to build.</li>
+</ul>
+</section>
+<section id="alternative-px4" class="level3">
+<h3>Alternative: PX4</h3>
+<ul>
+<li>Open Source Software</li>
+<li>Developed by Computer Vision and Geometry Group, ETHZ</li>
+<li>Uses open, wide-spread protocol MAVLink</li>
+<li>Runs on free RTOS <a href="http://nuttx.org/">NuttX</a>, available for AVR, ARM and more.</li>
+</ul>
+</section>
+<section id="pixhawk-hardware" class="level3">
+<h3>Pixhawk Hardware</h3>
+<ul>
+<li>Developed by the same group</li>
+<li>Expensive</li>
+<li>I already have a microcontroller and all sensors</li>
+</ul>
+<figure>
+<img src="images/pixhawk.jpg" alt="Pixhawk" /><figcaption>Pixhawk</figcaption>
+</figure>
+</section>
+<section id="nuttx-beginning-2015" class="level3">
+<h3>NuttX (beginning 2015)</h3>
+<ul>
+<li>Our board uses the Teensy 3.1:
+<ul>
+<li>ARM Cortex M4</li>
+<li>Freescale Kinetis K20 family</li>
+</ul></li>
+<li>NuttX (beginning 2015) has support for K40 family</li>
+</ul>
+</section>
+<section id="lets-port-it" class="level3">
+<h3>Let's port it!</h3>
+<ul>
+<li>Subtle differences in processor families, K20 != K40</li>
+<li>I was never much involved with kernel development beforehand</li>
+<li>Debugging microcontrollers is no fun
+<ul>
+<li>(without JTAG or other fancy equipment)</li>
+</ul></li>
+</ul>
+</section>
+<section id="fast-forward-2-months" class="level3">
+<h3>Fast-forward 2 months</h3>
+</section>
+<section id="get-the-pixhawk-and-move-on" class="level3">
+<h3>Get the Pixhawk and move on</h3>
+</section>
+</section>
+<section id="quadrotor-take-away" class="level2">
+<h2>Quadrotor Take-Away:</h2>
+<ul>
+<li>A lot of work has gone into existing hardware platforms</li>
+<li>⇒ Use existing Pixhawk controller</li>
+</ul>
+<figure>
+<img src="images/pixhawk.jpg" alt="Pixhawk" /><figcaption>Pixhawk</figcaption>
+</figure>
+</section>
+<section id="the-base-station" class="level2">
+<h2>2. The Base Station</h2>
+<ul>
+<li>Control drone with joystick/gamepad</li>
+<li>Display live flight information
+<ul>
+<li>&quot;virtual cockpit&quot;</li>
+</ul></li>
+<li>Underlying process: <em>(proactive)</em> message streaming</li>
+</ul>
+</section>
+<section id="mavlink-protocol" class="level2">
+<h2>MAVLink Protocol</h2>
+<ul>
+<li>Wide-spread use, including the PX4</li>
+<li>Published 2009 by Lorenz Meier, ETHZ</li>
+<li>Very simple and extensible</li>
+</ul>
+</section>
+<section id="mavlink-frame" class="level2">
+<h2>MAVLink Frame</h2>
+<ul>
+<li>Header-only structure</li>
+<li>Every entity on network has 2-byte address</li>
+<li>Low overhead: 6 bytes</li>
+</ul>
+<pre class="scala"><code>+-----+-----+-----+-------+--------+-------+---------+-----+
+| Stx | Len | Seq | SysID | CompID | MsgID | Payload | CRC |
++-----+-----+-----+-------+--------+-------+---------+-----+
+| 1   | 1   | 1   | 1     | 1      | 1     | n       | 2   |
++-----+-----+-----+-------+--------+-------+---------+-----+</code></pre>
+</section>
+<section id="mavlink-messages" class="level2">
+<h2>MAVLink Messages</h2>
+<ul>
+<li>Message consists of:
+<ul>
+<li>ID/name</li>
+<li>collection of fields (name, value) pairs</li>
+</ul></li>
+<li><p>Common message definitions in XML</p></li>
+<li><p><a href="https://github.com/mavlink/mavlink">Official repository</a> contains bindings for various languages</p></li>
+</ul>
+<pre class="xml"><code>&lt;message id=&quot;0&quot; name=&quot;HEARTBEAT&quot;&gt;
+    &lt;description&gt;Description...&lt;/description&gt;
+    &lt;field type=&quot;uint8_t&quot; name=&quot;type&quot;&gt;...&lt;/field&gt;
+    &lt;field type=&quot;uint8_t&quot; name=&quot;autopilot&quot;&gt;...&lt;/field&gt;
+    &lt;field type=&quot;uint8_t&quot; name=&quot;base_mode&quot;&gt;...&lt;/field&gt;
+    &lt;field type=&quot;uint32_t&quot; name=&quot;custom_mode&quot;&gt;...&lt;/field&gt;
+    &lt;field type=&quot;uint8_t&quot; name=&quot;system_status&quot;&gt;...&lt;/field&gt;
+&lt;/message&gt;</code></pre>
+</section>
+<section id="mavlink-via-the-base-station" class="level2">
+<h2>MAVLink via the Base Station</h2>
+<ul>
+<li>Send movement messages to drone:
+<ul>
+<li>standalone program</li>
+<li>⇒ <a href="https://github.com/project-condor/maverick">Maverick</a></li>
+</ul></li>
+<li>View and send non-movement messages:
+<ul>
+<li>⇒ <a href="https://github.com/project-condor/mavigator">Mavigator</a> (rest of this presentation)</li>
+</ul></li>
+</ul>
+</section>
+<section id="mavigator" class="level2">
+<h2>Mavigator</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Requirement</th>
+<th style="text-align: left;">add Scala</th>
+<th style="text-align: left;">Area</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Modern, portable UI</td>
+<td style="text-align: left;">Scala.js</td>
+<td style="text-align: left;">frontend</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Web server</td>
+<td style="text-align: left;">Akka Http</td>
+<td style="text-align: left;">backend</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Message streaming</td>
+<td style="text-align: left;">Akka Streams</td>
+<td style="text-align: left;">backend</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="live-demo" class="level2">
+<h2>Live Demo</h2>
+<section id="alternatives" class="level4">
+<h4>Alternatives</h4>
+<ul>
+<li>online: <a href="http://mavigator.jodersky.ch" class="uri">http://mavigator.jodersky.ch</a></li>
+<li>run locally: <code>sbt mavigator-server/run</code></li>
+</ul>
+</section>
+</section>
+<section id="frontend-scala.js" class="level2">
+<h2>Frontend: Scala.js</h2>
+<ul>
+<li>A JavaScript backend to the Scala compiler.
+<ul>
+<li>All the goodies from Scala: type safety, collections, etc</li>
+<li>Outputs plain JavaScript</li>
+<li>Can interface with plain JavaScript</li>
+</ul></li>
+<li>Developed at EPFL by Sebastien Doeraene</li>
+<li>Still in 0.x but totally usable!</li>
+</ul>
+</section>
+<section id="frontend-design" class="level2">
+<h2>Frontend: Design</h2>
+<ul>
+<li>One-page applications</li>
+<li>Static scaffolding with <a href="https://github.com/playframework/twirl">Twirl</a> (Play! templates)</li>
+<li>Common launcher for all applications</li>
+<li>Extensible &quot;cake&quot; pattern:
+<ul>
+<li>Providing web page environment</li>
+<li>Reading messages</li>
+<li>Displaying instruments</li>
+<li>Laying out elements</li>
+</ul></li>
+</ul>
+</section>
+<section id="backend-akka-streams" class="level2">
+<h2>Backend: Akka Streams</h2>
+<ul>
+<li>Compatible with Reactive Streams
+<ul>
+<li>standard for aynchronous, non-blocking, back-pressures streaming</li>
+<li><a href="http://www.reactive-streams.org/" class="uri">http://www.reactive-streams.org/</a></li>
+</ul></li>
+<li>&quot;Natural&quot; Streaming API</li>
+</ul>
+</section>
+<section id="streams-as-graphs" class="level2">
+<h2>Streams as Graphs</h2>
+<figure>
+<img src="images/stream-graphs.svg" alt="overview" /><figcaption>overview</figcaption>
+</figure>
+</section>
+<section id="streams-in-code" class="level2">
+<h2>Streams in Code</h2>
+<figure>
+<img src="images/counter.svg" />
+</figure>
+<pre class="scala"><code>//Simple source
+val src: Source[Int, _] = Source.tick[Int](100millis, 100millis, 1)
+
+//Nested source
+val inc: Source[Int, _] = src.scan(0)(_+_)
+
+//A discrete flow
+val flow = Flow[Int].map(_*2)
+
+//Simple sink
+val sink = Sink.foreach(println)
+
+//Print all even numbers, ad infinitum
+(inc via flow to sink).run()
+</code></pre>
+</section>
+<section id="more-streams" class="level2">
+<h2>More Streams</h2>
+<ul>
+<li>Arbitrary graphs</li>
+<li>Feedback loops</li>
+<li>Materialization</li>
+<li>Much more...</li>
+</ul>
+<p><a href="http://akka.io" class="uri">http://akka.io</a></p>
+</section>
+<section id="backend-conceptual-model" class="level2">
+<h2>Backend: Conceptual Model</h2>
+<figure>
+<img src="images/model.svg" alt="Conceptual stream model" /><figcaption>Conceptual stream model</figcaption>
+</figure>
+</section>
+<section id="backend-actual-model" class="level2">
+<h2>Backend: Actual Model</h2>
+<figure>
+<img src="images/core.svg" alt="Actual stream model" /><figcaption>Actual stream model</figcaption>
+</figure>
+</section>
+<section id="serial-backend" class="level2">
+<h2>Serial Backend</h2>
+<pre class="scala"><code>Serial().watch(Set(&quot;/dev/ttyUSB0&quot;)).runForeach{ port =&gt;
+
+  //replace backend on connection
+  val multiplexer: Flow[Bytes, Bytes, NotUsed] = setBackend()
+
+  //open actual connection to drone
+  val uav: Flow[Bytes, Bytes, NotUsed] =
+    Serial().open(port, serialSettings)
+
+  (uav join multiplexer).run()
+}</code></pre>
+<ul>
+<li><code>Serial()</code> is a custom Akka extension</li>
+<li>See <a href="https://www.jodersky.ch/flow" class="uri">https://www.jodersky.ch/flow</a> for implementation</li>
+</ul>
+</section>
+<section id="web-sockets" class="level2">
+<h2>Web Sockets</h2>
+<pre class="scala"><code>path(&quot;/mavlink&quot;) {
+  get {
+    val fromWebSocket = Flow[Message].collect{
+      case BinaryMessage.Strict(data) =&gt; data
+    }
+
+    val toWebSocket = Flow[Bytes].map{bytes =&gt;
+      BinaryMessage(bytes)
+    }
+
+    //request connection to multiplexer
+    val backend: Flow[Bytes, Bytes, NotUsed] = Uav().connect()
+
+    handleWebSocketMessages(fromWebSocket via backend via toWebSocket)
+  }
+}</code></pre>
+<ul>
+<li>Akka Route DSL</li>
+<li>Graph is run by Akka Http</li>
+</ul>
+</section>
+<section id="mavlink-codegen" class="level2">
+<h2>MAVLink CodeGen</h2>
+<ul>
+<li><a href="https://github.com/project-condor/sbt-mavlink">sbt-mavlink</a>:
+<ul>
+<li>generates data parser and assembler</li>
+<li>message maps to case class</li>
+</ul></li>
+</ul>
+<pre class="scala"><code>case class Attitude(
+  timeBootMs: Int,
+  roll: Float, pitch: Float, yaw: Float,
+  rollspeed: Float, pitchspeed: Float, yawspeed: Float)
+    extends Message</code></pre>
+</section>
+<section id="demo-do-a-barrel-roll" class="level2">
+<h2>Demo: Do a Barrel Roll</h2>
+<ul>
+<li>Define &quot;unstable&quot; message</li>
+<li>Add extra UI element to notify user</li>
+<li>Inject attitude messages</li>
+</ul>
+</section>
+<section id="message" class="level2">
+<h2>Message</h2>
+<p>Add to dialect definition:</p>
+<pre class="xml"><code>&lt;message id=&quot;150&quot; name=&quot;STABILITY&quot;&gt;
+    &lt;description&gt;Stability issues&lt;/description&gt;
+    &lt;field type=&quot;uint8_t&quot; name=&quot;stable&quot;&gt;Is it stable?&lt;/field&gt;
+&lt;/message&gt;</code></pre>
+</section>
+<section id="new-ui-element" class="level2">
+<h2>New UI element</h2>
+<ul>
+<li>Danger indicator</li>
+<li>Illuminates on stability issues</li>
+</ul>
+</section>
+<section id="barrel-roll-injection" class="level2">
+<h2>Barrel Roll: Injection</h2>
+<figure>
+<img src="images/core-new.svg" alt="overview" /><figcaption>overview</figcaption>
+</figure>
+</section>
+<section id="live-demo-1" class="level2">
+<h2>Live Demo</h2>
+<section id="alternatives-1" class="level4">
+<h4>Alternatives</h4>
+<ul>
+<li><code>git checkout demo1-before</code></li>
+<li><code>git checkout demo1-after</code></li>
+</ul>
+</section>
+</section>
+<section id="references" class="level2">
+<h2>References</h2>
+<ul>
+<li><p>Mavigator repository:</p>
+<p><a href="https://github.com/project-condor/mavigator" class="uri">https://github.com/project-condor/mavigator</a></p></li>
+<li><p>Project website:</p>
+<p><a href="https://project-condor.github.io" class="uri">https://project-condor.github.io</a></p></li>
+</ul>
+</section>
+	    </div>
+
+	    <script src="revealjs/lib/js/head.min.js"></script>
+	    <script src="revealjs/js/reveal.js"></script>
+
+	    <script>
+	     // Full list of configuration options available here:
+	     // https://github.com/hakimel/reveal.js#configuration
+	     Reveal.initialize({
+		 controls: true,
+		 progress: true,
+		 history: true,
+		 center: false,
+		 // available themes are in /css/theme
+		 		 theme: Reveal.getQueryHash().theme || 'league', 
+		 		 // default/cube/page/concave/zoom/linear/fade/none
+		 		 transition: Reveal.getQueryHash().transition || 'default',
+		 		 // Optional libraries used to extend on reveal.js
+		 dependencies: [
+		     { src: 'revealjs/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+		     { src: 'revealjs/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		     { src: 'revealjs/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+		     { src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		     { src: 'revealjs/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+		     //{ src: 'revealjs/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+		     // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+		 ]
+	     });
+	    </script>
+
+    </body>
+</html>

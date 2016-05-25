@@ -1,0 +1,12 @@
+#!/bin/sh
+
+pandoc \
+    --to=html5 \
+    --template=template.html \
+    --standalone \
+    --section-divs \
+    --variable theme=league \
+    --no-highlight \
+    presentation.md \
+    --output=presentation.html \
+    $@

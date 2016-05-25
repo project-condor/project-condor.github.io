@@ -1,0 +1,16 @@
+digraph {
+	graph [rankdir=LR, concentrate=true];
+	uav [label="Drone"];
+	server [label="Server"];
+	client1 [label="Client"];
+	client2 [label="Client"];
+	clientn [label="Client"];
+	uav->server;
+	server->uav;
+	server->client1;
+	client1->server;
+	server->client2
+	client2->server;
+	server->clientn;
+	clientn->server;
+}
